@@ -4,3 +4,17 @@ data
 models
 *.swp
 *.p
+
+lenet.data-00000-of-00001
+
+__pycache__/
+
+.idea/
+
+traffic-signs-data/
+
+checkpoint
+
+lenet.index
+
+lenet.meta
