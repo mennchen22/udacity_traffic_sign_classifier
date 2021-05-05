@@ -37,7 +37,7 @@ def readTrafficSigns(rootpath):
         # loop over all images in current annotations file
         for row in gtReader:
             img = cv2.imread(prefix + row[0])  # the 1th column is the filename
-            img = cv2.cvtColor(img, code=cv2.COLOR_RGB2GRAY)
+            img = cv2.cvtColor(img, code=cv2.COLOR_BGR2RGB)
             img = cv2.resize(img, dsize=(32, 32), interpolation=cv2.INTER_CUBIC)
             images.append(img)
             labels.append(row[7])  # the 8th column is the label
