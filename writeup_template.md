@@ -117,7 +117,7 @@ There is a set of hyperparameter to change:
 Therefore changes will be made iteratively and the results are compared to find the best setup.
 The best results came from this setup:
 
-1) Epochs --> [100]
+1) Epochs --> [200]
 2) Learning Rate --> [0.001]
 3) Batch size --> [32]
 4) Dropout keep --> [0.5]
@@ -128,8 +128,9 @@ Below the accuracy of different training runs are shown:
 [lee_net_1]: ./result_images/train_loss_bs128_ep100_lt0.001_dk0.5.png "Labels"
 [lee_net_2]: ./result_images/train_loss_bs64_ep100_lt0.002_dk0.5.png "Labels"
 [lee_net_3]: ./result_images/train_loss_model_Leenet_bs32_ep100_lt0.001_dk0.5.png "Labels"
-[new_images_german]: ./result_images/gtsrb_image_transformations.png" "German Traffic Sign Dataset"
-[five_images]: ./result_images/gtsrb_five_images.png" "Five selected images"
+[lee_net_4]: ./result_images/train_loss_model_Leenet_bs32_ep200_lt0.001_dk0.5.png "Labels"
+[new_images_german]: ./result_images/gtsrb_image_transformations.png "German Traffic Sign Dataset"
+[five_images]: ./result_images/gtsrb_five_images.png "Five selected images"
 
 Parallel net
 
@@ -140,17 +141,18 @@ LeNet
 ![alt text][lee_net_1]
 ![alt text][lee_net_2]
 ![alt text][lee_net_3]
+![alt text][lee_net_4]
 
 From the hyperparameter tuning this information could be gathered:
 
 Better results comes with lower batch size
 A lowered learning rate reduce the variance of the loss over time 
-An epoch count of 100 fits the training model because the learning will not change the result with more epochs
+An epoch count of 200 fits the training model because the learning will increase even after 100eEpochs and stabelize at > 150 epochs 
 
 ### Final results 
 
-Best Validation accuracy: 93,6 % in Epoch 91
-Test Accuracy: 87,2%
+Best Validation accuracy: 93.24 % in epoch 158 
+Test Accuracy: 89,99%
 
 ### Test a Model on New Images 
 
@@ -173,33 +175,83 @@ Here are the results of the prediction:
 
 | Image			        |     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+| Priority Road      	| Priority Road  								| 
+| Speed Limit 100kmh    | Speed Limit 100kmh  							|
+| Ahead only			| Ahead only									|
+| Yield	      		    | Yield					 				        |
+| Roundabout mandatory	| Roundabout mandatory      					|
 
 
 The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
 
-#### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
+#### 3. Prediction results
 
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
+The code for making predictions on my final model is located at the bottom of the Ipython notebook.
+Next following the five images prediction results for the top five classes:
 
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
+#### Image 1
+
+For the first image, the model is relatively sure that this is a Priority Road sign (probability of 0.6), and the image does contain a stop sign.
 
 | Probability         	|     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
+| 0.9999999999         			| Priority Road 									| 
+| .0000000337     				| Stop										|
+| .0000000022					| Yield											|
+| .0000000005	      			| Right-of-way at the next intersection				 				|
+| .0000000000				    | Road work   							|
+
+Here it seems like a sharp geometry filter divides the signs in this set.
+
+#### Image 2
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 0.9999999999         			| Speed Limit (100km/h)  											| 
+| .0000000000     				| Speed limit (80km/h)										|
+| .0000000000					| Priority road											|
+| .0000000000	      			| Speed limit (30km/h) |
+| .0000000000				    | Speed limit (120km/h)  							|
+
+Althoght the correct sign is classified by nearly 100% (cut at 10 digits) the net detects speed signs expect the priority road sign with the same color set (in grayscale).
+
+#### Image 3
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 0.9999999999         			| Ahead only  											| 
+| .0000000000     				| Go straight or right										|
+| .0000000000					| No passing											|
+| .0000000000	      			| Priority road |
+| .0000000000				    | Keep left  							|
+
+The sign is classified with almost 100% certainty. Other detected shapes contains arrows like the sign itself.
+
+#### Image 4
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 0.9999999999         			| Yield 											| 
+| .0000000000     				| Keep right									|
+| .0000000000					|  Go straight or right													|
+| .0000000000	      			|Stop |
+| .0000000000				    | Ahead only 							|
+
+Expect to the other images the other detected classes dont fit a clear subset of features in the image. The yield sign has no letters or arrows, but the classic shape flipped over.
 
 
-For the second image ... 
+#### Image 5
 
-### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
-#### 1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 0.9993985891         			|  Roundabout mandatory  											| 
+| .0005886111     				| Priority road									|
+| .0000096762					|  Stop										|
+| .0000027947	      			|Vehicles over 3.5 metric tons prohibited |
+| .0000003302				    | Speed limit (100km/h)						|
 
+At least the fith image has less certainty. Other round shaped objects are likely to fit the label, but with a result less than 1%
 
+# Discussion
+
+This approach uses a basic LeNet with dropout. This could be extended with more layers to improve the classification result. Additionally, a noise algorithm was used to randomize the images even more, but with worse results. This method could be tested with more parameter tuning to generalize the data classifiication even more.
